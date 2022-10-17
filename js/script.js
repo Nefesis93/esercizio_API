@@ -9,6 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 listaUtenti.set(o.id, o);
             });
             appendUtenti();
+            this.querySelectorAll('tr').forEach(row => {
+                //row.addEventListener('click', function() {
+                //   showDetails();
+                //})
+            });
         })
         .catch(err => console.log(err));
 });
@@ -31,12 +36,28 @@ function getButton(icon, className, f) {
     return getSingleColumn(button);
 }
 
+function showDetails() {
+    removeDetails();
+    let div = document.querySelector('#details');
+    div.className = 'col';
+}
+
+function removeDetails() {
+    let div = document.querySelector('#details');
+    div.className = '';
+    div.innerHTML = '';
+}
+
 function appendUtenti() {
     let tbody = document.querySelector("tbody");
     tbody.innerHTML = "";
 
     listaUtenti.forEach(utente => {
         let tr = document.createElement("tr");
+
+        tr.addEventListener('click', function() {
+            showDetails();
+        })
 
         for (const key in utente) {
             if (key === "id" || key === "name" ||
@@ -47,7 +68,8 @@ function appendUtenti() {
 
         let icon = document.createElement("i");
         icon.className = "bi bi-trash";
-        tr.appendChild(getButton(icon, "btn btn-outline-danger", function() {
+        tr.appendChild(getButton(icon, "btn btn-outline-danger", function(e) {
+            e.stopPropagation();
             let userID = parseInt(this.parentNode.parentNode.firstChild.innerHTML);
             listaUtenti.delete(userID);
             let prUserDelete = fetch('https://jsonplaceholder.typicode.com/users/' + userID, {
@@ -59,6 +81,7 @@ function appendUtenti() {
                     }
                 })
                 .catch(err => console.log(err));
+            removeDetails();
             appendUtenti();
         }));
         tbody.appendChild(tr);
