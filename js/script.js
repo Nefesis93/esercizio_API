@@ -4,16 +4,10 @@ let prUsers = fetch('https://jsonplaceholder.typicode.com/users')
 
 document.addEventListener('DOMContentLoaded', function() {
     prUsers.then(obj => {
-            //listaUtenti = obj;
             obj.forEach(o => {
                 listaUtenti.set(o.id, o);
             });
             appendUtenti();
-            this.querySelectorAll('tr').forEach(row => {
-                //row.addEventListener('click', function() {
-                //   showDetails();
-                //})
-            });
         })
         .catch(err => console.log(err));
 });
@@ -75,14 +69,12 @@ function appendUtenti() {
             let prUserDelete = fetch('https://jsonplaceholder.typicode.com/users/' + userID, {
                     method: 'DELETE',
                 })
-                .then(response => {
-                    if (response.ok !== true) {
-                        console.log('errore durante la cancellazione dell\'utente');
-                    }
+                .then(response => response.json())
+                .then(obj => {
+                    removeDetails();
+                    appendUtenti();
                 })
                 .catch(err => console.log(err));
-            removeDetails();
-            appendUtenti();
         }));
         tbody.appendChild(tr);
     })
